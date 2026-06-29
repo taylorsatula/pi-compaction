@@ -1,4 +1,4 @@
-# @taylatsatula/pi-mirastyle-compaction
+# @taylorsatula/pi-pi-compaction
 
 Mira-style coding checkpoint compaction for [Pi](https://pi.dev). Replaces Pi's default compaction with structured engineering handoff summaries that preserve concrete facts, decisions, code references, and artifact state.
 
@@ -18,13 +18,13 @@ Key differences from Pi's default compaction:
 
 ```bash
 # Global
-pi install npm:@taylatsatula/pi-mirastyle-compaction
+pi install npm:@taylorsatula/pi-pi-compaction
 
 # Project-local (shared with team via .pi/settings.json)
-pi install -l npm:@taylatsatula/pi-mirastyle-compaction
+pi install -l npm:@taylorsatula/pi-pi-compaction
 
 # Temporary test
-pi -e npm:@taylatsatula/pi-mirastyle-compaction
+pi -e npm:@taylorsatula/pi-pi-compaction
 ```
 
 ## Configuration
@@ -33,15 +33,15 @@ Two CLI flags control which model generates the checkpoint:
 
 | Flag | Description |
 |------|-------------|
-| `--mirastyle-compaction-provider` | Provider name, e.g. `anthropic` or `google`. Requires `--mirastyle-compaction-model`. |
-| `--mirastyle-compaction-model` | Model ID, e.g. `claude-sonnet-4-20250514`. Requires `--mirastyle-compaction-provider`. |
+| `--pi-compaction-provider` | Provider name, e.g. `anthropic` or `google`. Requires `--pi-compaction-model`. |
+| `--pi-compaction-model` | Model ID, e.g. `claude-sonnet-4-20250514`. Requires `--pi-compaction-provider`. |
 
 If neither flag is set, or if the configured model is unavailable, the extension falls back to the currently active model. If no active model has auth, Pi's default compaction is used.
 
 Example:
 
 ```bash
-pi --mirastyle-compaction-provider anthropic --mirastyle-compaction-model claude-sonnet-4-20250514
+pi --pi-compaction-provider anthropic --pi-compaction-model claude-sonnet-4-20250514
 ```
 
 Custom compaction instructions can be passed via Pi's standard mechanism:
