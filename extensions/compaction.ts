@@ -32,6 +32,7 @@ import {
 	resolveModelAuth,
 	type NotificationType,
 } from "./compaction/summarizer-model.ts";
+import { installTools } from "./compaction/tools.ts";
 
 interface PreparedPromptContext {
 	readFiles: string[];
@@ -118,6 +119,7 @@ async function preparePromptContext(input: {
 
 export default function (pi: ExtensionAPI) {
 	registerSummarizerFlags(pi);
+	installTools(pi);
 
 	pi.on("session_before_compact", async (event, ctx) => {
 		const selected = await resolveModelAuth(pi, ctx, (message, type) => notifyUi(ctx, message, type));
