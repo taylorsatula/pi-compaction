@@ -1,6 +1,6 @@
 {
   "name": "@taylorsatula/pi-compaction",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Mira-style coding checkpoint compaction for Pi — structured engineering handoff summaries with model-selected cut points and full artifact tracking.",
   "keywords": ["pi-package"],
   "type": "module",

@@ -1,6 +1,7 @@
 import type { GitSnapshot } from "./artifact-snapshot.ts";
 import type { CutpointSelectionDetails } from "./cutpoint-selection.ts";
 import { EXTENSION_NAME, SUMMARY_VERSION } from "./identity.ts";
+import { formatHandoffLine } from "./handoff-reference.ts";
 import type { SummarizerSelectionReason } from "./summarizer-model.ts";
 
 export const SYSTEM_PROMPT = `You are a coding-session compaction engine.
@@ -128,6 +129,7 @@ export interface MirastyleCompactionDetails {
 	extension: typeof EXTENSION_NAME;
 	version: number;
 	generatedAt: string;
+	handoffUrl?: string;
 	readFiles: string[];
 	modifiedFiles: string[];
 	compactedReadFiles: string[];
@@ -152,6 +154,7 @@ interface FileLists {
 
 export function buildCompactionDetails(input: {
 	generatedAt: string;
+	handoffUrl?: string;
 	allFileLists: FileLists;
 	compactedFileLists: FileLists;
 	retainedFileLists: FileLists;
@@ -167,6 +170,7 @@ export function buildCompactionDetails(input: {
 		extension: EXTENSION_NAME,
 		version: SUMMARY_VERSION,
 		generatedAt: input.generatedAt,
+		handoffUrl: input.handoffUrl,
 		readFiles: input.allFileLists.readFiles,
 		modifiedFiles: input.allFileLists.modifiedFiles,
 		compactedReadFiles: input.compactedFileLists.readFiles,
@@ -328,6 +332,7 @@ export function wrapSummary(input: {
 	tokensBefore: number;
 	isSplitTurn: boolean;
 	sessionFile: string;
+	handoffUrl?: string;
 	readFiles: string[];
 	modifiedFiles: string[];
 	retainedMessageCount: number;
@@ -341,7 +346,7 @@ RECOVERY:
 - Session file: ${input.sessionFile}
 - First kept entry ID: ${input.firstKeptEntryId}
 - Compacted from token count: ${input.tokensBefore}
-- Split turn: ${input.isSplitTurn}
+- Split turn: ${input.isSplitTurn}${input.handoffUrl ? `\n- ${formatHandoffLine(input.handoffUrl)}` : ""}
 - For exact pre-compaction details (tool arguments, command output, message order), read session file JSONL records before first_kept_entry_id rather than relying on this checkpoint.
 
 ARTIFACT STATE:

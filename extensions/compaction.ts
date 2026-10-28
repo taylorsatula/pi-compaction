@@ -18,6 +18,7 @@ import {
 	isValidCutpointEntry,
 	selectCutpoint,
 } from "./compaction/cutpoint-selection.ts";
+import { parseHandoffUrl } from "./compaction/handoff-reference.ts";
 import { EXTENSION_NAME } from "./compaction/identity.ts";
 import {
 	getPreparedEntryRanges,
@@ -122,6 +123,11 @@ export default function (pi: ExtensionAPI) {
 	installTools(pi);
 
 	pi.on("session_before_compact", async (event, ctx) => {
+		// Bail early if another extension owns this compaction (e.g., plan-mode clean workspace)
+		if (event.customInstructions?.trim().startsWith("[planmode pre-implementation]")) {
+			return;
+		}
+
 		const selected = await resolveModelAuth(pi, ctx, (message, type) => notifyUi(ctx, message, type));
 		if (!selected) {
 			return;
@@ -129,6 +135,7 @@ export default function (pi: ExtensionAPI) {
 
 		const { preparation, customInstructions, signal, branchEntries } = event;
 		const normalizedCustomInstructions = customInstructions?.trim() || undefined;
+		const handoffUrl = parseHandoffUrl(normalizedCustomInstructions);
 		const promptContext = await preparePromptContext({
 			pi,
 			ctx,
@@ -204,6 +211,7 @@ export default function (pi: ExtensionAPI) {
 				tokensBefore: preparation.tokensBefore,
 				isSplitTurn: preparation.isSplitTurn,
 				sessionFile: promptContext.sessionFile,
+				handoffUrl,
 				readFiles: projection.allFileLists.readFiles,
 				modifiedFiles: projection.allFileLists.modifiedFiles,
 				retainedMessageCount: projection.retainedMessages.length,
@@ -212,6 +220,7 @@ export default function (pi: ExtensionAPI) {
 
 			const details = buildCompactionDetails({
 				generatedAt: promptContext.compactedAt,
+				handoffUrl,
 				allFileLists: projection.allFileLists,
 				compactedFileLists: projection.compactedFileLists,
 				retainedFileLists: projection.retainedFileLists,
